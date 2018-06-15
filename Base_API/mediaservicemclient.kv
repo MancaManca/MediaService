@@ -1,0 +1,119 @@
+#:kivy 1.10.0
+#:import hex kivy.utils.get_color_from_hex
+<Progression>:
+    progress_barr: progress_bar_container
+    orientation: 'vertical'
+    id: progression_view
+
+#    canvas.before:
+#        Color:
+#            rgba: 0.2, 0.5, 0.8, 1
+#        Rectangle:
+#            # self here refers to the widget i.e BoxLayout
+#            pos: self.pos
+#            size: self.size
+    BoxLayout:
+        orientation: 'vertical'
+        id: progress_bar_container
+        opacity: 1
+
+#        BoxLayout:
+#            id: prod_b
+#            size_hint_x: .7
+#            size_hint_y: .2
+##            height: dp(15)
+#            orientation: 'horizontal'
+#            pos_hint:{'center_x': 0.5, 'center_y': 0.5}
+##            canvas.before:
+##                Color:
+##                    rgba: hex('#d3d3d3')
+##                Rectangle:
+##                    pos: self.pos
+##                    size: self.size
+#
+#            BoxLayout:
+#                id: dynamic_progress
+#                size_hint_x: 0.01
+#                size_hint_y: None
+#                height: dp(15)
+##                size_hint_y:1
+#                Label:
+#                    id: mm
+#                    canvas.before:
+#                        Color:
+#                            rgba: hex('#ff0000')
+#                        Rectangle:
+#                            pos: self.pos
+#                            size: self.size
+#            BoxLayout:
+#                id: static_progress
+#                size_hint_x: 0.99
+#                size_hint_y: None
+##                size_hint_y: 0.6
+#                height: dp(10)
+#
+#                Label:
+#                    id: kk
+#
+#                    height: dp(5)
+#                    size_hint_y: None
+#                    pos_hint:{'center_x': 0.5, 'center_y': .7}
+#                    canvas.before:
+#                        Color:
+#                            rgba: hex('#d3d3d3')
+#                        Rectangle:
+#                            pos: self.pos
+#                            size: self.size
+#
+        Label:
+            text: 'Loading: {}%'.format(int(pb.value))
+            size_hint_y: 0.2
+            size_hint_x: None
+            pos_hint:{'center_x': 0.5, 'center_y': 0.5}
+            width: dp(120)
+
+        ProgressBar:
+            id: pb
+            size_hint_y: 0.2
+            size_hint_x: 0.7
+            pos_hint:{'center_x': 0.5, 'center_y': 0.5}
+#            width: dp(800)
+    #        height: dp(50)
+
+            value: 0
+        BoxLayout:
+            size_hint_x: .7
+            size_hint_y: .2
+            height: dp(15)
+            orientation: 'horizontal'
+            pos_hint:{'center_x': 0.5, 'center_y': 0.5}
+            FloatLayout:
+
+                Label:
+                    id: dd
+                    size_hint_y: 1
+                    size_hint_x: 1
+
+                    opacity: 0.0
+                    pos_hint:{'center_x': 0.5, 'center_y': 0.5}
+
+                    canvas.before:
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+                            source: 'd3.jpg'
+                Label:
+                    id: dv
+                    size_hint_y: 1
+                    size_hint_x: 1
+
+                    opacity: 1
+                    pos_hint:{'center_x': 0.5, 'center_y': 0.5}
+
+                    canvas.before:
+#                        Color:
+#                            rgba: hex('#d3d3d3')
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+                            source: '123.png'
