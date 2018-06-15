@@ -306,7 +306,7 @@ class SeriesView(Screen):
         Clock.schedule_once(self.pr, 9)
 
         layout = GridLayout(cols=1, padding=5, spacing=5,
-                            size_hint=(None, None), width=690)
+                            size_hint=(None, None), width=1000)
 
         # when we add children to the grid layout, its size doesn't change at
         # all. we need to ensure that the height will be the minimum required
@@ -314,25 +314,30 @@ class SeriesView(Screen):
         # bounding box of the childs)
         layout.bind(minimum_height=layout.setter('height'))
 
-        oooo = ScrollView(size_hint=(None, None), size=(800, 700),
+        oooo = ScrollView(size_hint=(None, None), size=(800, 1010),
                           pos_hint={'center_x': .5, 'center_y': .5}, do_scroll_x=False)
         oooo.add_widget(layout)
         print(self.ids)
-        # self.ids.series_view_container.add_widget(oooo)
+        self.ids.series_view_container.add_widget(oooo)
 
         # pippp = Shows(genre='animation', order='1', sort='name').get_search()
         # check_api_validity(pippp)
         # Logger.info(json.dumps(pippp.json(), sort_keys=True, indent=4))
 
+
+        # _items = Item()
+        # _items.add_widget(AsyncImage(source=hashed_dic_grouop['6b43cd1e32c32983ff0b1a520812ecc7b008c32097ead5812168d33967246151']['images']['poster']))
+        # self.add_widget(_items)
         for kk in hashed_dic_grouop:
-            print('{}----{}'.format(kk, hashed_dic_grouop[kk]))
+        #     print('{}----{}'.format(kk, hashed_dic_grouop[kk]))
             _items = Item()
             _items.add_widget(AsyncImage(source=hashed_dic_grouop[kk]['images']['poster']))
-            _items.add_widget(Label(text=hashed_dic_grouop[kk]['title']))
-
-
             layout.add_widget(_items)
-            """{'_id': 'tt3793630', 'imdb_id': 'tt3793630', 'tvdb_id': '282756', 'title': 'The Lion Guard', 'year': '2016', 'slug': 'the-lion-guard', 'rating': {'percentage': 68, 'watching': 0, 'votes': 42, 'loved': 100, 'hated': 100}, 'num_seasons': 2, 'images': {'poster': 'http://image.tmdb.org/t/p/w500/AtDL8ZrOZxW1jakT2R3LcMdLvQD.jpg', 'fanart': 'http://image.tmdb.org/t/p/w500/6nArW4w8UVJyElJpgS7f1MuO3QO.jpg', 'banner': 'http://image.tmdb.org/t/p/w500/AtDL8ZrOZxW1jakT2R3LcMdLvQD.jpg'}}"""
+        #     _items.add_widget(Label(text=hashed_dic_grouop[kk]['title']))
+        #
+        #
+        #     layout.add_widget(_items)
+        #     """{'_id': 'tt3793630', 'imdb_id': 'tt3793630', 'tvdb_id': '282756', 'title': 'The Lion Guard', 'year': '2016', 'slug': 'the-lion-guard', 'rating': {'percentage': 68, 'watching': 0, 'votes': 42, 'loved': 100, 'hated': 100}, 'num_seasons': 2, 'images': {'poster': 'http://image.tmdb.org/t/p/w500/AtDL8ZrOZxW1jakT2R3LcMdLvQD.jpg', 'fanart': 'http://image.tmdb.org/t/p/w500/6nArW4w8UVJyElJpgS7f1MuO3QO.jpg', 'banner': 'http://image.tmdb.org/t/p/w500/AtDL8ZrOZxW1jakT2R3LcMdLvQD.jpg'}}"""
         #     self.thr = threading.Thread(target=self.get_u, args=(kk,))
         #     self.thr.start()
         # self.get_u(kk)
@@ -417,9 +422,12 @@ class MainView(Screen):
         super(MainView, self).__init__(**kwargs)
         Logger.info('MainView: Initialized {}'.format(self))
         # Clock.schedule_once(self.pr, 9)
-        self.ids.screen_m_container.add_widget(MainViewScManager())
+        self.scm = MainViewScManager()
+        self.ids.screen_m_container.add_widget(self.scm)
         print(self.ids)
 
+    def set_to_cur(self, scn, *args):
+        self.scm.current = scn
     def pr(self, *args):
         print(self.parent)
         print(self.manager.screens)

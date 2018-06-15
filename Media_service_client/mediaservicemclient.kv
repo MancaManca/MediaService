@@ -131,19 +131,19 @@
 
 #                pos_hint:{'center_x': 0.5, 'center_y': 0.5}
 
-                on_release: self.manager.current = 'movies_view'
+                on_release: root.set_to_cur('movies_view')
             Button:
                 text: 'series'
                 width: dp(50)
 #                pos_hint:{'center_x': 0.5, 'center_y': 0.5}
 
-                on_release: self.manager.current = 'series_view'
+                on_release: root.set_to_cur('series_view')
             Button:
                 text: 'latest'
                 width: dp(50)
 #                pos_hint:{'center_x': 0.5, 'center_y': 0.5}
 
-                on_release: self.manager.current = 'latest_view'
+                on_release: root.set_to_cur('latest_view')
         BoxLayout:
             id: screen_m_container
             size_hint_y: .9
@@ -156,7 +156,7 @@
                     # self here refers to the widget i.e BoxLayout
                     pos: self.pos
                     size: self.size
-                MainViewS
+
 
 #                LatestView:
 #
@@ -318,6 +318,19 @@
 
 <SeriesView>:
     name: 'series_view'
+    BoxLayout:
+        orientation: 'vertical'
+        id: series_view_container
+        opacity: 1
+        canvas.before:
+            Color:
+                rgba: hex('#ffa500')
+            Rectangle:
+                # self here refers to the widget i.e BoxLayout
+                pos: self.pos
+                size: self.size
+#        Label:
+#            text: root.name
 
 
 #        Label:
@@ -367,5 +380,5 @@
 <Item>:
     id: ite
     orientation: 'vertical'
-    size:(690, 40)
+    size:(690, 400)
     size_hint:(None, None)
