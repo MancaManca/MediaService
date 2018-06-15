@@ -131,19 +131,19 @@
 
 #                pos_hint:{'center_x': 0.5, 'center_y': 0.5}
 
-                on_release: main_view_sc_manager.current = 'movies_view'
+                on_release: self.manager.current = 'movies_view'
             Button:
                 text: 'series'
                 width: dp(50)
 #                pos_hint:{'center_x': 0.5, 'center_y': 0.5}
 
-                on_release: main_view_sc_manager.current = 'series_view'
+                on_release: self.manager.current = 'series_view'
             Button:
                 text: 'latest'
                 width: dp(50)
 #                pos_hint:{'center_x': 0.5, 'center_y': 0.5}
 
-                on_release: main_view_sc_manager.current = 'latest_view'
+                on_release: self.manager.current = 'latest_view'
         BoxLayout:
             id: screen_m_container
             size_hint_y: .9
@@ -156,15 +156,16 @@
                     # self here refers to the widget i.e BoxLayout
                     pos: self.pos
                     size: self.size
-            MainViewScManager:
-                id: main_view_sc_manager
-                LatestView:
+                MainViewS
 
-                MoviesView:
-
-                SeriesView:
-
-                SearchView:
+#                LatestView:
+#
+#
+#                MoviesView:
+#
+#                SeriesView:
+#
+#                SearchView:
 
 
 #        Label:
@@ -318,19 +319,9 @@
 <SeriesView>:
     name: 'series_view'
 
-    BoxLayout:
-        orientation: 'vertical'
-        id: series_view_container
-        opacity: 1
-        canvas.before:
-            Color:
-                rgba: hex('#ff0000')
-            Rectangle:
-                # self here refers to the widget i.e BoxLayout
-                pos: self.pos
-                size: self.size
-        Label:
-            text: root.name
+
+#        Label:
+#            text: root.name
 
 <MoviesView>:
     name: 'movies_view'
@@ -373,3 +364,8 @@
         Button:
             text: 'reconnet'
             on_release: root.reconnect()
+<Item>:
+    id: ite
+    orientation: 'vertical'
+    size:(690, 40)
+    size_hint:(None, None)

@@ -162,12 +162,12 @@ def get_hashed_json_dic(__json_hashed_in):
 
     for i in __json_hashed_in:
 
-        # print('>'*90)
-        # # to_hash = 'b"{}"'.format(i)
-        # print('{} {} '.format(i, __json_hashed_in[i]))
-        # # hashlib.sha224(to_hash).hexdigest()
-        # print('>'*90)
-        # print('\n')
+        print('>'*90)
+        # to_hash = 'b"{}"'.format(i)
+        print('{} {} '.format(i, __json_hashed_in[i]))
+        # hashlib.sha224(to_hash).hexdigest()
+        print('>'*90)
+        print('\n')
         hashed_dic_grouop[i] = __json_hashed_in[i]
 
 def populate_hashed_table(_key, _pair):
