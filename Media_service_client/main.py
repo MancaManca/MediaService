@@ -8,6 +8,7 @@ import pyperclip
 from kivy._clock import CyClockBaseFree
 from kivy.app import App
 from kivy.clock import mainthread
+from kivy.core.window import Window
 from kivy.metrics import dp
 from kivy.properties import Logger, Clock, partial, DictProperty
 from kivy.properties import ObjectProperty
@@ -305,8 +306,8 @@ class SeriesView(Screen):
 
         Clock.schedule_once(self.pr, 9)
 
-        layout = GridLayout(cols=1, padding=5, spacing=5,
-                            size_hint=(None, None), width=1000)
+        layout = GridLayout(cols=2, padding=5, spacing=5,
+                            size_hint=(None, None), width=ViewControl.width_x-30)
 
         # when we add children to the grid layout, its size doesn't change at
         # all. we need to ensure that the height will be the minimum required
@@ -314,7 +315,7 @@ class SeriesView(Screen):
         # bounding box of the childs)
         layout.bind(minimum_height=layout.setter('height'))
 
-        oooo = ScrollView(size_hint=(None, None), size=(800, 1010),
+        oooo = ScrollView(size_hint=(None, None), size=(ViewControl.width_x-20, ViewControl.height_x-150),
                           pos_hint={'center_x': .5, 'center_y': .5}, do_scroll_x=False)
         oooo.add_widget(layout)
         print(self.ids)
@@ -332,6 +333,7 @@ class SeriesView(Screen):
         #     print('{}----{}'.format(kk, hashed_dic_grouop[kk]))
             _items = Item()
             _items.add_widget(AsyncImage(source=hashed_dic_grouop[kk]['images']['poster']))
+            _items.add_widget(Label(text=hashed_dic_grouop[kk]['title'],size_hint_y=.1))
             layout.add_widget(_items)
         #     _items.add_widget(Label(text=hashed_dic_grouop[kk]['title']))
         #
@@ -456,7 +458,7 @@ class ScanView(Screen):
 
 
     def start_service(self, *args):
-        pippp = Shows(genre='animation', order='1', sort='name').get_search()
+        pippp = Shows(order='1', sort='name').get_search()
         check_api_validity(pippp)
         # Logger.info(json.dumps(pippp.json(), sort_keys=True, indent=4))
 
@@ -503,7 +505,19 @@ class SettingsView(Screen):
         self.manager.current = 'main'
         # print(' MainView {}'.format(self.parent))
 
+class So:
+    def __init__(self, **kwargs):
+        Logger.info('So: Initialized {}'.format(self))
+
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.settimeout(2)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
 class ViewControl(ScreenManager):
+    print(Window.size)
+    height_x = Window.size[1]
+    width_x = Window.size[0]
+
     def __init__(self, **kwargs):
         super(ViewControl, self).__init__(**kwargs)
         Logger.info('ViewControl: Initialized {}'.format(self))
@@ -511,39 +525,48 @@ class ViewControl(ScreenManager):
         self.t1 = threading.Thread(name="Hello1", target=self.start_loading_screen())
         self.t1.start()
 
-        self.t2 = threading.Thread(target=self.scanner)
-        self.t2.start()
+        for _subnet in range(9,13):
+
+            self.thr = threading.Thread(target=self.scanner, args=(_subnet,))
+            self.thr.start()
 
     def start_loading_screen(self, *args):
         self.add_widget(Progression(name='loading'))
 
-    def scanner(self ,*args):
+    def scanner(self ,_subnet, *args):
         # Logger.info('entered scanner for {}'.format(threading.currentThread().getName()))
-        for _subnet in range(12,13):
-            Logger.info('Scanner for {}'.format(_subnet))
-            # network = '192.168.0.{}'.format(_subnet)
-            network = '10.85.180.{}'.format(_subnet)
 
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            socket.setdefaulttimeout(0.1)
 
-            try:
-                _socker = sock.connect_ex((network, 8000))
+        network = '192.168.0.{}'.format(_subnet)
+        Logger.info('Scanner for {}'.format(network))
+        # network = '10.85.180.{}'.format(_subnet)
+        s = So()
 
-                if _socker == 0:
-                    Logger.info('Found online at {}'.format(network))
-                    responded_msgs = sock.recv(2048)
-                    ScanView.urls_list[network] = str(responded_msgs.decode())
-                else:
-                    Logger.info('{} responded {}'.format(network, _socker))
+        try:
+            _socker = s.sock.connect_ex((network, 8000))
 
-            except PermissionError:
-                print('permission')
-            except ConnectionRefusedError:
-                print('Refused')
-            finally:
-                sock.close()
-                Logger.info('Current :{} Exiting'.format(threading.currentThread().getName()))
+            if _socker == 0:
+                Logger.info('Found online at {}'.format(network))
+
+                responded_msgs = s.sock.recv(2048)
+                ScanView.urls_list[network] = str(responded_msgs.decode())
+                s.sock.close()
+
+            else:
+                Logger.info('{} responded {}'.format(network, _socker))
+        except socket.timeout:
+            s.sock.close()
+        except PermissionError:
+            print('permission')
+            s.sock.close()
+        except ConnectionRefusedError:
+            print('Refused')
+            s.sock.close()
+        except TimeoutError:
+            s.sock.close()
+        finally:
+            s.sock.close()
+            Logger.info('Current :{} Exiting for {}'.format(threading.currentThread().getName(),_subnet))
 
 
 class MediaServiceMclientApp(App):
@@ -552,6 +575,7 @@ class MediaServiceMclientApp(App):
         Logger.info('Application : Initialized {}'.format(self))
 
         self.root = BoxLayout(orientation='vertical')
+
         return self.root
 
     def on_start(self):
