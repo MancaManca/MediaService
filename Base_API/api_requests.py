@@ -5,8 +5,22 @@ from inspect import signature
 
 import requests
 
-hashed_dic = {}
-hashed_dic_grouop = {}
+# hashed_dic = {}
+# hashed_dic_grouop = {}
+hashed_dic_shows = {}
+hashed_dic_show = {}
+hashed_dic_movie = {}
+hashed_dic_movies = {}
+hashed_dic_search = {}
+
+class HashedHolder:
+    def __init__(self):
+        self.hashed_dic_shows = {}
+        self.hashed_dic_show = {}
+        self.hashed_dic_movie = {}
+        self.hashed_dic_movies = {}
+        self.hashed_dic_search = {}
+
 class ApiContentError(Exception):
     """An API Content Error Exception"""
 
@@ -146,10 +160,10 @@ class Shows(api):
 
 # pippp = Shows(genre='animation', order='1', sort='name').get_shows_page()\
 
-pippp = Shows(_id = 'tt4209752').get_search_by_id()
+# pippp = Shows(_id = 'tt4209752').get_search_by_id()
 # pippp = Shows(keywords='once upon a time', order='1', sort='name').get_search()
 
-print(json.dumps(pippp.json(), sort_keys=True, indent=4))
+# print(json.dumps(pippp.json(), sort_keys=True, indent=4))
 
 # resp = todo.get_tasks()
 # if resp.status_code != 200:
@@ -168,35 +182,44 @@ def api_request_handler(_response):
 
 
 # pippp = Shows().get_pages()
-# pippp = Shows(_id = 'tt4209752').get_search_by_id()
-# pippp = Shows(genre='animation', order='1', sort='name').get_search()
-# pippp = Shows(page='1', order='1', sort='updated').get_search()
-# pippp = Movies().get_pages()
-# pippp = Movies(keywords='mission impossible', order='1', sort='name').get_search()
-# pippp = Movies(_id = 'tt0120755').get_search_by_id()
+pippp1 = Shows(_id = 'tt4209752').get_search_by_id()
+pippp2 = Shows(genre='', order='-1', sort='name').get_search()
+# pippp3 = Shows(page='1', order='1', sort='updated').get_search()
+# pippp4 = Movies().get_pages()
+pippp5 = Movies(keywords='mission impossible', order='-1', sort='name').get_search()
+pippp6 = Movies(_id = 'tt0120755').get_search_by_id()
 
 def item_level_():
     pass
 def hash_item_m(x):
-    to_hash = '{}'.format(i['_id'])
-    to_hash = to_hash.encode()
-    hashed = hashlib.sha256(to_hash.encode()).hexdigest()
+    to_hash = '{}'.format(x)
+    hashed_item = hashlib.sha256(to_hash.encode()).hexdigest()
+    return  hashed_item
 
-def hash_item(__json_in): # requires JSON object
+def hash_item(__json_in, method_flag): # requires JSON object
     # print(type(__json_in))
     __json_hashed_out = {}
-    for i in __json_in:
-        print(i)
-        to_hash = '{}'.format(i['_id'])
-        # to_hash = to_hash.encode()
-        hashed = hashlib.sha256(to_hash.encode()).hexdigest()
+    if method_flag:
+        print('going for multi flag {}'.format(method_flag))
+        for i in __json_in:
+            # print(i)
+            hashed = hash_item_m(i['_id'])
 
-        populate_hashed_table(hashed, i['_id'])
-        __json_hashed_out[hashed] = i
+
+            # populate_hashed_table(hashed, i['_id'])
+            __json_hashed_out[hashed] = i
+    else:
+        print('going for multi flag {}'.format(method_flag))
+        # i_for_hash = __json_in['_id']
+        hashed = hash_item_m(__json_in['_id'])
+        # populate_hashed_table(hashed, __json_in)
+        __json_hashed_out[hashed] = __json_in
+
+
 
     return __json_hashed_out
 
-def get_hashed_json_dic(__json_hashed_in):
+def get_hashed_json_dic(__json_hashed_in, to_dic):
 
     for i in __json_hashed_in:
 
@@ -207,24 +230,57 @@ def get_hashed_json_dic(__json_hashed_in):
         # hashlib.sha224(to_hash).hexdigest()
         # Logger.info('>'*90)
         # Logger.info('\n')
-        hashed_dic_grouop[i] = __json_hashed_in[i]
+        to_dic[i] = __json_hashed_in[i]
 
-def populate_hashed_table(_key, _pair):
-    hashed_dic[_key] = _pair
+# def populate_hashed_table(_key, _pair):
+#     hashed_dic[_key] = _pair
 
-
-def get_api(x):
+def api_request_controler(_api_call_response):
+    if Shows().short_url in _api_call_response.url:
+        get_hashed_json_dic(hash_item(_api_call_response.json(), False), hashed_dic_show)
+    if Movies().short_url in _api_call_response.url:
+        get_hashed_json_dic(hash_item(_api_call_response.json(), False), hashed_dic_movie)
+    if Movies().url in _api_call_response.url:
+        get_hashed_json_dic(hash_item(_api_call_response.json(), True), hashed_dic_movies)
+    if Shows().url in _api_call_response.url:
+        get_hashed_json_dic(hash_item(_api_call_response.json(), True), hashed_dic_shows)
+def get_api(_api_call):
+    print(_api_call.url)
 
     try:
-        api_request_handler(x)
+        api_request_handler(_api_call)
+        api_request_controler(_api_call)
     except Exception as e:
         print(e)
 
-    get_hashed_json_dic(hash_item(x.json()))
 
-api_request_handler(pippp)
 
-print('sadhsadhasdh')
-for i in hashed_dic_grouop:
 
-    print('{} {}'.format(i, hashed_dic_grouop[i]))
+# api_request_handler(pippp)
+get_api(pippp1)
+get_api(pippp2)
+# get_api(pippp3)
+# get_api(pippp4)
+get_api(pippp5)
+get_api(pippp6)
+print('work on movies')
+for i in hashed_dic_movies:
+
+    print('{} {}'.format(i, hashed_dic_movies[i]))
+print('work on movie')
+
+for i in hashed_dic_movie:
+
+    print('{} {}'.format(i, hashed_dic_movie[i]))
+
+print('work on shows')
+
+for i in hashed_dic_shows:
+
+    print('{} {}'.format(i, hashed_dic_shows[i]))
+
+print('work on show')
+
+for i in hashed_dic_show:
+
+    print('{} {}'.format(i, hashed_dic_show[i]))
